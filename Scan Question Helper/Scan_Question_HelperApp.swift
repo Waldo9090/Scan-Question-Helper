@@ -11,16 +11,12 @@ import SuperwallKit
 @main
 struct Scan_Question_HelperApp: App {
     init() {
-        Superwall.configure(apiKey: "pk_5dd4f309b5cb7eef5181d4392188197f9b470e6b89d78dea")    }
+        Superwall.configure(apiKey: "pk_5dd4f309b5cb7eef5181d4392188197f9b470e6b89d78dea")
+    }
     
     var body: some Scene {
         WindowGroup {
-            if UserDefaults.standard.bool(forKey: "isSignedIn") {
-                TabBarView()
-                    .navigationBarBackButtonHidden(true)
-            } else {
-                ContentView()
-            }
+            UnifiedOnboardingView()
         }
     }
 }

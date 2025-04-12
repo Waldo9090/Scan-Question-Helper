@@ -2,92 +2,155 @@ import SwiftUI
 import UserNotifications
 
 struct OnboardingView2: View {
+    let subjects = [
+        ("Math Problems", "function", Color.red.opacity(0.8)),
+        ("Quizzes & Tests", "checkmark.square.fill", Color.blue.opacity(0.8)),
+        ("Physics", "atom", Color.green.opacity(0.8)),
+        ("Biology", "leaf.fill", Color.purple.opacity(0.8)),
+        ("Chemistry", "flask.fill", Color.orange.opacity(0.8))
+    ]
+    
     var body: some View {
-        NavigationView {
-            VStack {
-                // Push all content downward.
-                Spacer(minLength: 40)
+        VStack(spacing: 20) {
+            // Top Tools Section
+            VStack(spacing: 15) {
+                Text("Essential Tools")
+                    .font(.title3)
+                    .fontWeight(.bold)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal)
                 
-                // Image and buttons block
-                VStack(spacing: 16) {
-                    Image("math") // Ensure "math" exists in assets.
-                        .resizable()
-                        .scaledToFit()
-                        .frame(height: 350)  // Increased height for a larger image.
-                        .cornerRadius(10)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 10)
-                                .stroke(Color.white, lineWidth: 2)
+                // Scanner and Chat
+                HStack(spacing: 15) {
+                    ToolButton(
+                        icon: "viewfinder.circle.fill",
+                        title: "Scanner",
+                        subtitle: "Snap your task\nfor answers",
+                        color: Color.purple.opacity(0.8)
+                    )
+                    ToolButton(
+                        icon: "bubble.left.and.bubble.right.fill",
+                        title: "Chat",
+                        subtitle: "Tackle writing\nand other tasks",
+                        color: Color.blue.opacity(0.8)
+                    )
+                }
+                .padding(.horizontal)
+            }
+            
+            // Subjects Section
+            VStack(spacing: 15) {
+                Text("Study Subjects")
+                    .font(.title3)
+                    .fontWeight(.bold)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal)
+                    .padding(.top, 10)
+                
+                // Subject Grid
+                LazyVGrid(columns: [
+                    GridItem(.flexible(), spacing: 15),
+                    GridItem(.flexible(), spacing: 15)
+                ], spacing: 15) {
+                    ForEach(subjects, id: \.0) { subject in
+                        SubjectButton(
+                            icon: subject.1,
+                            title: subject.0,
+                            color: subject.2
                         )
-                    
-                    // Additional Buttons Under the Image
-                    HStack(spacing: 40) {
-                        Button(action: {
-                            print("Image button tapped")
-                        }) {
-                            Image(systemName: "photo")
-                                .foregroundColor(.white)
-                                .frame(width: 60, height: 60)
-                                .background(Color.black.opacity(0.6))
-                                .clipShape(Circle())
-                        }
-                        
-                        Button(action: {
-                            print("Scan button tapped")
-                        }) {
-                            Image(systemName: "viewfinder")
-                                .foregroundColor(.white)
-                                .frame(width: 60, height: 60)
-                                .background(Color.orange)
-                                .clipShape(Circle())
-                        }
-                        
-                        Button(action: {
-                            print("Flash button tapped")
-                        }) {
-                            Image(systemName: "bolt")
-                                .foregroundColor(.white)
-                                .frame(width: 60, height: 60)
-                                .background(Color.black.opacity(0.6))
-                                .clipShape(Circle())
-                        }
                     }
                 }
-                
-                // Move text downward to be closer to the Continue button.
-                VStack(spacing: 8) {
-                    Text("Effortlessly scan tasks and\nlet AI handle the work")
-                        .font(.title)
-                        .fontWeight(.bold)
-                        .multilineTextAlignment(.center)
-                        .foregroundColor(.white)
-                    
-                    Text("Easily scan your homework, and AI will analyze the problem, offering step-by-step explanations and in-depth answers.")
-                        .font(.body)
-                        .multilineTextAlignment(.center)
-                        .foregroundColor(.white.opacity(0.8))
-                        .padding(.horizontal, 20)
-                }
-                .padding(.top, 20)
-                
-                Spacer() // Push the text and Continue button together to the bottom.
-                
-                // Continue Button with Notification permission request
-                ContinueNavigationButton(destination: OnboardingView3().navigationBarBackButtonHidden(true))
-                    .simultaneousGesture(TapGesture().onEnded {
-                        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { granted, error in
-                            if let error = error {
-                                print("Notification permission error: \(error.localizedDescription)")
-                            } else {
-                                print(granted ? "Notifications permission granted." : "Notifications permission denied.")
-                            }
-                        }
-                    })
-                    .padding(.bottom, 40) // Adds extra space at the bottom if needed.
+                .padding(.horizontal)
             }
-            .background(Color.black)
-            .edgesIgnoringSafeArea(.all)
-            .navigationBarHidden(true)
+            
+            Spacer()
+            
+            // Title and Description
+            Text("Conquer Any Task\nwith Powerful\nStudy Tools")
+                .font(.title)
+                .fontWeight(.bold)
+                .multilineTextAlignment(.center)
+                .padding(.bottom, 10)
+            
+            // Page Indicator
+            PageIndicator(currentPage: 1, totalPages: 3)
+            
+            // Navigation Button
+            NavigationLink(destination: OnboardingView3().navigationBarBackButtonHidden(true)) {
+                HStack {
+                    Text("Continue")
+                        .fontWeight(.semibold)
+                    Image(systemName: "arrow.right")
+                }
+                .foregroundColor(.white)
+                .frame(maxWidth: .infinity)
+                .padding()
+                .background(Color.purple.opacity(0.8))
+                .cornerRadius(30)
+                .padding(.horizontal, 20)
+                .padding(.bottom, 40)
+            }
         }
+        .background(Color.black)
+        .foregroundColor(.white)
+        .navigationBarHidden(true)
+    }
+}
+
+struct ToolButton: View {
+    let icon: String
+    let title: String
+    let subtitle: String
+    let color: Color
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Image(systemName: icon)
+                .font(.system(size: 30))
+                .foregroundColor(.white)
+            
+            VStack(alignment: .leading, spacing: 4) {
+                Text(title)
+                    .font(.headline)
+                    .foregroundColor(.white)
+                
+                Text(subtitle)
+                    .font(.caption)
+                    .foregroundColor(.white.opacity(0.8))
+                    .lineSpacing(2)
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding()
+        .background(color)
+        .cornerRadius(20)
+    }
+}
+
+struct SubjectButton: View {
+    let icon: String
+    var title: String
+    let color: Color
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Image(systemName: icon)
+                .font(.system(size: 24))
+                .foregroundColor(.white)
+            
+            Text(title)
+                .font(.headline)
+                .foregroundColor(.white)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding()
+        .background(color)
+        .cornerRadius(20)
+    }
+}
+
+struct OnboardingView2_Previews: PreviewProvider {
+    static var previews: some View {
+        OnboardingView2()
     }
 }
