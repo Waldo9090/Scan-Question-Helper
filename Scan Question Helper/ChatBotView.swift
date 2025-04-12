@@ -35,10 +35,10 @@ struct ChatGPTResponse: Codable {
 }
 
 struct Choice: Codable {
-    let message: ChatMessage
+    let message: APIMessage
 }
 
-struct ChatMessage: Codable {
+struct APIMessage: Codable {
     let role: String
     let content: String
 }
