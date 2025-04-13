@@ -407,6 +407,8 @@
 				DEVELOPMENT_ASSET_PATHS = "\"Scan Question Helper/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Scan-Question-Helper-Info.plist";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Access to your photo library allows the app to analyze math problems from your images and provide step-by-step solutions.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -435,6 +437,8 @@
 				DEVELOPMENT_ASSET_PATHS = "\"Scan Question Helper/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Scan-Question-Helper-Info.plist";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Access to your photo library allows the app to analyze math problems from your images and provide step-by-step solutions.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

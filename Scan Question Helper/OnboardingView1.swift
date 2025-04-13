@@ -2,62 +2,38 @@ import SwiftUI
 
 struct OnboardingView1: View {
     var body: some View {
-        NavigationView {
-            VStack(spacing: 20) {
-                // Example Math Problem Card
-                ZStack {
-                    RoundedRectangle(cornerRadius: 20)
-                        .fill(Color.gray.opacity(0.2))
-                        .frame(maxWidth: .infinity)
-                        .padding(.horizontal, 20)
+        VStack(spacing: 0) {
+            ScrollView(showsIndicators: false) {
+                VStack(spacing: 30) {
+                    // Example Problem Card
+                    VStack(alignment: .leading, spacing: 20) {
+                        SectionTitle(title: "Smart Problem Solving", subtitle: "Get instant solutions with AI")
+                        
+                        ExampleProblemCard()
+                    }
+                    .padding(.top, 20)
                     
-                    VStack(alignment: .leading, spacing: 15) {
-                        Text("1. What is the solution of 3x^2 - 2x + 1 = 0")
-                        Text("2. If a and b are the solutions to the equation\n(2x + 3)(3x - 1) = 7, find |a| + |b|.")
-                        Text("3. Determine the solution to the equation\n-4x^2 + 28x = 49")
-                            .padding(.vertical, 5)
-                            .background(Color.purple.opacity(0.2))
-                            .cornerRadius(8)
-                        Text("4. Construct a formula for the cost of any number\nof eggs at 30 cents per dozen.")
-                        Text("5. What is the difference in meaning between 10\nn and n+10?\nDoes 4w mean the same as 4 + w?")
-                    }
-                    .padding(20)
-                    .font(.system(size: 16))
-                }
-                
-                // Solution Popup
-                ZStack {
-                    HStack {
-                        Image("SolvoLogo") // Replace with your app's logo
-                            .resizable()
-                            .frame(width: 30, height: 30)
-                            .background(Color.black)
-                            .clipShape(Circle())
+                    // Solution Demo
+                    VStack(alignment: .leading, spacing: 20) {
+                        SectionTitle(title: "Step-by-Step Solutions", subtitle: "Understand every step")
                         
-                        Text("Solution")
-                            .fontWeight(.semibold)
-                        
-                        Text("x = 7/2")
-                            .padding(.horizontal, 10)
-                            .padding(.vertical, 5)
-                            .background(Color.black)
-                            .foregroundColor(.white)
-                            .cornerRadius(8)
+                        SolutionDemoCard()
                     }
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 12)
-                    .background(Color.white)
-                    .cornerRadius(20)
-                    .shadow(radius: 5)
                 }
-                
-                Spacer()
-                
-                // Title and Description
-                Text("Scan Math Problems\nand Get Step-by-Step\nSolutions")
-                    .font(.title)
-                    .fontWeight(.bold)
+                .padding(.horizontal)
+            }
+            
+            // Bottom Section
+            VStack(spacing: 20) {
+                Text("Transform How You\nLearn & Study")
+                    .font(.system(size: 28, weight: .bold))
                     .multilineTextAlignment(.center)
+                    .foregroundColor(.white)
+                    .padding(.top, 30)
+                
+                Text("Get instant help for any academic question")
+                    .font(.system(size: 17))
+                    .foregroundColor(.gray)
                 
                 // Page Indicator
                 PageIndicator(currentPage: 0, totalPages: 3)
@@ -79,9 +55,67 @@ struct OnboardingView1: View {
                 }
             }
             .background(Color.black)
-            .foregroundColor(.white)
         }
+        .background(Color.black)
         .navigationBarHidden(true)
+    }
+}
+
+struct ExampleProblemCard: View {
+    var body: some View {
+        VStack(alignment: .leading, spacing: 15) {
+            ForEach(0..<3) { index in
+                HStack(alignment: .top, spacing: 12) {
+                    Text("\(index + 1).")
+                        .foregroundColor(.gray)
+                    
+                    if index == 2 {
+                        Text("Solve the quadratic equation: -4x² + 28x = 49")
+                            .padding(.vertical, 5)
+                            .padding(.horizontal, 8)
+                            .background(Color.purple.opacity(0.2))
+                            .cornerRadius(8)
+                    } else {
+                        Text(index == 0 ? "Find the solution of 3x² - 2x + 1 = 0" : "If a and b are solutions to (2x + 3)(3x - 1) = 7, find |a| + |b|")
+                    }
+                }
+                .font(.system(size: 16))
+                .foregroundColor(.white)
+            }
+        }
+        .padding(20)
+        .frame(maxWidth: .infinity)
+        .background(Color.gray.opacity(0.2))
+        .cornerRadius(20)
+    }
+}
+
+struct SolutionDemoCard: View {
+    var body: some View {
+        HStack(spacing: 15) {
+            Image("SolvoLogo")
+                .resizable()
+                .frame(width: 40, height: 40)
+                .background(Color.purple)
+                .clipShape(Circle())
+            
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Step-by-Step Solution")
+                    .font(.headline)
+                    .foregroundColor(.white)
+                
+                Text("x = 7/2")
+                    .font(.system(size: 16, weight: .medium))
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background(Color.purple.opacity(0.3))
+                    .cornerRadius(8)
+            }
+        }
+        .padding()
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color.gray.opacity(0.2))
+        .cornerRadius(20)
     }
 }
 

@@ -92,7 +92,7 @@ struct TabBarView: View {
             }
             .offset(y: -30)
             .fullScreenCover(isPresented: $showCameraView) {
-                CustomCameraView()
+                CameraView()
             }
         }
     }
@@ -102,42 +102,98 @@ struct TabBarView: View {
 struct DiscoverView: View {
     var body: some View {
         ScrollView {
-            VStack(spacing: 25) {
+            VStack(spacing: 30) {
+                // Welcome Section
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Welcome to Solvo")
+                        .font(.title)
+                        .fontWeight(.bold)
+                        .foregroundColor(.white)
+                    
+                    Text("Your AI-powered learning assistant")
+                        .font(.subheadline)
+                        .foregroundColor(.gray)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal)
+                .padding(.top)
+                
                 // Study Tools Section
                 VStack(alignment: .leading, spacing: 15) {
                     SectionHeader(title: "Study Tools", subtitle: "Essential tools for your learning journey")
                     
-                    LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 15) {
-                        ToolItem(icon: "viewfinder", title: "Scanner", subtitle: "Solve tasks\nby photo")
-                        ToolItem(icon: "bubble.left.and.bubble.right", title: "Chat", subtitle: "Tackle writing\nand more")
-                        ToolItem(icon: "plus.minus", title: "Calculator", subtitle: "Do math\nmanually")
+                    HStack(spacing: 15) {
+                        ToolCard(
+                            icon: "viewfinder",
+                            title: "Smart Scanner",
+                            subtitle: "Solve problems\nby photo",
+                            color: Color.purple.opacity(0.8)
+                        )
+                        
+                        ToolCard(
+                            icon: "bubble.left.and.bubble.right",
+                            title: "AI Chat",
+                            subtitle: "Get step-by-step\nhelp instantly",
+                            color: Color.blue.opacity(0.8)
+                        )
                     }
                 }
                 .padding(.horizontal)
                 
-                // Scan to Solve Section
+                // Quick Actions Section
                 VStack(alignment: .leading, spacing: 15) {
-                    SectionHeader(title: "Scan to Solve", subtitle: "Take a photo of your problem to get instant solutions")
+                    SectionHeader(title: "Quick Actions", subtitle: "Solve problems instantly")
                     
-                    LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 15) {
-                        SubjectItem(title: "Math Problems", icon: "function", color: Color(hex: "#FF6B6B"))
-                        SubjectItem(title: "Quizzes & Tests", icon: "checkmark.square.fill", color: Color(hex: "#4ECDC4"))
-                        SubjectItem(title: "Physics", icon: "atom", color: Color(hex: "#45B7D1"))
-                        SubjectItem(title: "Biology", icon: "leaf.fill", color: Color(hex: "#96CEB4"))
-                        SubjectItem(title: "Chemistry", icon: "flask.fill", color: Color(hex: "#FFBE0B"))
-                        SubjectItem(title: "Other Tasks", icon: "square.stack.3d.up.fill", color: Color(hex: "#9B5DE5"))
+                    VStack(spacing: 12) {
+                        QuickActionButton(
+                            title: "Math Problems",
+                            icon: "function",
+                            color: Color(hex: "#FF6B6B"),
+                            description: "Algebra, Calculus & more"
+                        )
+                        
+                        QuickActionButton(
+                            title: "Physics & Chemistry",
+                            icon: "atom",
+                            color: Color(hex: "#4ECDC4"),
+                            description: "Formulas & reactions"
+                        )
+                        
+                        QuickActionButton(
+                            title: "Essay Writing",
+                            icon: "text.quote",
+                            color: Color(hex: "#9B5DE5"),
+                            description: "Essays & analysis"
+                        )
                     }
                 }
                 .padding(.horizontal)
                 
-                // Chat to Solve Section
+                // Featured Tools Section
                 VStack(alignment: .leading, spacing: 15) {
-                    SectionHeader(title: "Chat to Solve", subtitle: "Get help with writing and complex problems")
+                    SectionHeader(title: "Featured Tools", subtitle: "Popular learning resources")
                     
-                    LazyVGrid(columns: [GridItem(.flexible())], spacing: 15) {
-                        ChatSolveItem(title: "Create Essay", icon: "pencil.and.outline", color: Color(hex: "#FF9F1C"))
-                        ChatSolveItem(title: "Compose Text", icon: "text.bubble.fill", color: Color(hex: "#2EC4B6"))
-                        ChatSolveItem(title: "Generate Summary", icon: "doc.text.fill", color: Color(hex: "#E71D36"))
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 15) {
+                            FeaturedToolCard(
+                                title: "Step-by-Step Solutions",
+                                icon: "list.bullet.rectangle",
+                                color: Color(hex: "#FF9F1C")
+                            )
+                            
+                            FeaturedToolCard(
+                                title: "Practice Questions",
+                                icon: "pencil.and.outline",
+                                color: Color(hex: "#2EC4B6")
+                            )
+                            
+                            FeaturedToolCard(
+                                title: "Study Notes",
+                                icon: "note.text",
+                                color: Color(hex: "#E71D36")
+                            )
+                        }
+                        .padding(.horizontal)
                     }
                 }
                 .padding(.horizontal)
@@ -146,6 +202,94 @@ struct DiscoverView: View {
         }
         .background(Color.black)
         .navigationTitle("Discover")
+    }
+}
+
+struct ToolCard: View {
+    let icon: String
+    let title: String
+    let subtitle: String
+    let color: Color
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Image(systemName: icon)
+                .font(.system(size: 24))
+                .foregroundColor(.white)
+            
+            Text(title)
+                .font(.headline)
+                .foregroundColor(.white)
+            
+            Text(subtitle)
+                .font(.caption)
+                .foregroundColor(.white.opacity(0.8))
+                .lineSpacing(4)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding()
+        .background(color)
+        .cornerRadius(20)
+    }
+}
+
+struct QuickActionButton: View {
+    let title: String
+    let icon: String
+    let color: Color
+    let description: String
+    
+    var body: some View {
+        Button(action: {}) {
+            HStack(spacing: 15) {
+                Image(systemName: icon)
+                    .font(.title2)
+                    .foregroundColor(.white)
+                    .frame(width: 40)
+                
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(title)
+                        .font(.headline)
+                        .foregroundColor(.white)
+                    
+                    Text(description)
+                        .font(.caption)
+                        .foregroundColor(.white.opacity(0.8))
+                }
+                
+                Spacer()
+                
+                Image(systemName: "chevron.right")
+                    .foregroundColor(.white.opacity(0.7))
+            }
+            .padding()
+            .background(color)
+            .cornerRadius(15)
+        }
+    }
+}
+
+struct FeaturedToolCard: View {
+    let title: String
+    let icon: String
+    let color: Color
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Image(systemName: icon)
+                .font(.system(size: 30))
+                .foregroundColor(.white)
+            
+            Text(title)
+                .font(.headline)
+                .foregroundColor(.white)
+                .multilineTextAlignment(.leading)
+        }
+        .frame(width: 160)
+        .padding()
+        .background(color)
+        .cornerRadius(20)
     }
 }
 

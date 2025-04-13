@@ -9,13 +9,16 @@ struct UnifiedOnboardingView: View {
     @State private var currentPage = 0
     @State private var isOnboardingComplete = false
     @AppStorage("isOnboardingComplete") var isOnboardingCompleteStorage: Bool = false
+    @State private var animateContent = false
     
-    // Create the onboarding pages
     private let onboardingPages: [OnboardingPage] = [
         OnboardingPage(content: AnyView(FirstOnboardingPage())),
         OnboardingPage(content: AnyView(SecondOnboardingPage())),
         OnboardingPage(content: AnyView(ThirdOnboardingPage()))
     ]
+    
+    // Add haptic feedback generator
+    private let hapticFeedback = UIImpactFeedbackGenerator(style: .medium)
     
     var body: some View {
         NavigationView {
@@ -31,21 +34,27 @@ struct UnifiedOnboardingView: View {
                         }
                     }
                     .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+                    .onChange(of: currentPage) { _ in
+                        withAnimation {
+                            animateContent.toggle()
+                        }
+                    }
                     
                     // Bottom controls
                     VStack(spacing: 20) {
-                        // Page Indicator
                         PageIndicator(currentPage: currentPage, totalPages: onboardingPages.count)
                         
-                        // Continue button
                         Button(action: {
-                            if currentPage < onboardingPages.count - 1 {
-                                withAnimation {
+                            // Add haptic feedback
+                            hapticFeedback.impactOccurred()
+                            
+                            withAnimation(.spring()) {
+                                if currentPage < onboardingPages.count - 1 {
                                     currentPage += 1
+                                } else {
+                                    isOnboardingComplete = true
+                                    isOnboardingCompleteStorage = true
                                 }
-                            } else {
-                                isOnboardingComplete = true
-                                isOnboardingCompleteStorage = true
                             }
                         }) {
                             HStack {
@@ -53,10 +62,10 @@ struct UnifiedOnboardingView: View {
                                     .fontWeight(.semibold)
                                 Image(systemName: "arrow.right")
                             }
-                            .foregroundColor(.white)
+                            .foregroundColor(.black)
                             .frame(maxWidth: .infinity)
                             .padding()
-                            .background(Color.purple.opacity(0.8))
+                            .background(Color.white)
                             .cornerRadius(30)
                             .padding(.horizontal, 20)
                             .padding(.bottom, 40)
@@ -75,138 +84,197 @@ struct UnifiedOnboardingView: View {
 
 // First Onboarding Page
 struct FirstOnboardingPage: View {
+    @State private var animateTitle = false
+    @State private var animateCard = false
+    @State private var animateSolution = false
+    
     var body: some View {
-        VStack(spacing: 20) {
-            // Example Math Problem Card
-            ZStack {
-                RoundedRectangle(cornerRadius: 20)
-                    .fill(Color.gray.opacity(0.2))
-                    .frame(maxWidth: .infinity)
-                    .padding(.horizontal, 20)
-                
-                VStack(alignment: .leading, spacing: 15) {
-                    Text("1. What is the solution of 3x^2 - 2x + 1 = 0")
-                    Text("2. If a and b are the solutions to the equation\n(2x + 3)(3x - 1) = 7, find |a| + |b|.")
-                    Text("3. Determine the solution to the equation\n-4x^2 + 28x = 49")
-                        .padding(.vertical, 5)
-                        .background(Color.purple.opacity(0.2))
-                        .cornerRadius(8)
-                    Text("4. Construct a formula for the cost of any number\nof eggs at 30 cents per dozen.")
-                    Text("5. What is the difference in meaning between 10\nn and n+10?\nDoes 4w mean the same as 4 + w?")
-                }
-                .padding(20)
-                .font(.system(size: 16))
-            }
+        VStack(spacing: 40) {
+            // Title
+            Text("Smart Math Solutions")
+                .font(.system(size: 36, weight: .bold))
+                .foregroundColor(.white)
+                .padding(.top, 60)
+                .opacity(animateTitle ? 1 : 0)
+                .offset(y: animateTitle ? 0 : 20)
             
-            // Solution Popup
-            ZStack {
-                HStack {
-                    Image("SolvoLogo")
-                        .resizable()
-                        .frame(width: 30, height: 30)
-                        .background(Color.black)
-                        .clipShape(Circle())
-                    
-                    Text("Solution")
-                        .fontWeight(.semibold)
-                    
-                    Text("x = 7/2")
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 5)
-                        .background(Color.black)
-                        .foregroundColor(.white)
-                        .cornerRadius(8)
+            // Example Math Problem Card
+            VStack(spacing: 20) {
+                ForEach(1...3, id: \.self) { index in
+                    HStack(spacing: 12) {
+                        Text("\(index).")
+                            .foregroundColor(.gray)
+                        
+                        Text(getMathProblem(index))
+                            .padding(.vertical, 8)
+                            .padding(.horizontal, index == 2 ? 12 : 0)
+                            .background(index == 2 ? Color.purple.opacity(0.2) : Color.clear)
+                            .cornerRadius(8)
+                    }
+                    .font(.system(size: 16))
                 }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 12)
-                .background(Color.white)
-                .cornerRadius(20)
-                .shadow(radius: 5)
             }
+            .padding(24)
+            .background(Color.white.opacity(0.05))
+            .cornerRadius(20)
+            .padding(.horizontal)
+            .opacity(animateCard ? 1 : 0)
+            .offset(y: animateCard ? 0 : 30)
+            
+            // Solution Card
+            HStack(spacing: 20) {
+                Circle()
+                    .fill(Color.purple)
+                    .frame(width: 44, height: 44)
+                    .overlay(
+                        Image(systemName: "sparkles")
+                            .foregroundColor(.white)
+                    )
+                
+                Text("x = 7/2")
+                    .font(.title3)
+                    .fontWeight(.medium)
+                    .foregroundColor(.white)
+                    .padding(.vertical, 8)
+                    .padding(.horizontal, 16)
+                    .background(Color.purple.opacity(0.2))
+                    .cornerRadius(12)
+            }
+            .padding(20)
+            .background(Color.white.opacity(0.05))
+            .cornerRadius(20)
+            .padding(.horizontal)
+            .opacity(animateSolution ? 1 : 0)
+            .offset(y: animateSolution ? 0 : 20)
             
             Spacer()
             
-            Text("Scan Math Problems\nand Get Step-by-Step\nSolutions")
-                .font(.title)
-                .fontWeight(.bold)
-                .multilineTextAlignment(.center)
-                .padding(.bottom, 20)
+            // Description
+            VStack(spacing: 12) {
+                Text("Scan & Solve")
+                    .font(.system(size: 32, weight: .bold))
+                Text("Get instant solutions")
+                    .font(.system(size: 20))
+                    .foregroundColor(.gray)
+            }
+            .multilineTextAlignment(.center)
+            .padding(.bottom, 20)
+            .opacity(animateTitle ? 1 : 0)
         }
         .foregroundColor(.white)
+        .onAppear {
+            withAnimation(.easeOut(duration: 0.6)) {
+                animateTitle = true
+            }
+            withAnimation(.easeOut(duration: 0.6).delay(0.3)) {
+                animateCard = true
+            }
+            withAnimation(.easeOut(duration: 0.6).delay(0.6)) {
+                animateSolution = true
+            }
+        }
+    }
+    
+    private func getMathProblem(_ index: Int) -> String {
+        switch index {
+        case 1: return "Solve: 2x² + 5x - 12 = 0"
+        case 2: return "Find x: log₂(x) + log₂(x+3) = 3"
+        case 3: return "Evaluate: ∫(2x + 1)dx from 0 to 2"
+        default: return ""
+        }
     }
 }
 
 // Second Onboarding Page
 struct SecondOnboardingPage: View {
-    let subjects = [
-        ("Math Problems", "function", Color.red.opacity(0.8)),
-        ("Quizzes & Tests", "checkmark.square.fill", Color.blue.opacity(0.8)),
-        ("Physics", "atom", Color.green.opacity(0.8)),
-        ("Biology", "leaf.fill", Color.purple.opacity(0.8)),
-        ("Chemistry", "flask.fill", Color.orange.opacity(0.8))
-    ]
+    @State private var animateTitle = false
+    @State private var animateTools = false
+    
+    let toolSize: CGFloat = (UIScreen.main.bounds.width - 60) / 2
     
     var body: some View {
-        VStack(spacing: 20) {
-            // Top Tools Section
-            VStack(spacing: 15) {
-                Text("Essential Tools")
-                    .font(.title3)
-                    .fontWeight(.bold)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal)
-                
-                // Scanner and Chat
-                HStack(spacing: 15) {
-                    ToolButton(
-                        icon: "viewfinder.circle.fill",
-                        title: "Scanner",
-                        subtitle: "Snap your task\nfor answers",
-                        color: Color.purple.opacity(0.8)
-                    )
-                    ToolButton(
-                        icon: "bubble.left.and.bubble.right.fill",
-                        title: "Chat",
-                        subtitle: "Tackle writing\nand other tasks",
-                        color: Color.blue.opacity(0.8)
-                    )
-                }
+        VStack(spacing: 30) {
+            // Title
+            Text("Essential Tools")
+                .font(.system(size: 36, weight: .bold))
+                .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal)
-            }
+                .padding(.top, 60)
+                .opacity(animateTitle ? 1 : 0)
+                .offset(y: animateTitle ? 0 : 20)
             
-            // Subjects Section
-            VStack(spacing: 15) {
-                Text("Study Subjects")
-                    .font(.title3)
-                    .fontWeight(.bold)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal)
-                    .padding(.top, 10)
+            // Featured Tools Grid
+            LazyVGrid(columns: [
+                GridItem(.flexible(), spacing: 20),
+                GridItem(.flexible(), spacing: 20)
+            ], spacing: 20) {
+                OnboardingToolCard(
+                    icon: "viewfinder",
+                    title: "Smart Scanner",
+                    color: .purple
+                )
                 
-                LazyVGrid(columns: [
-                    GridItem(.flexible(), spacing: 15),
-                    GridItem(.flexible(), spacing: 15)
-                ], spacing: 15) {
-                    ForEach(subjects, id: \.0) { subject in
-                        SubjectButton(
-                            icon: subject.1,
-                            title: subject.0,
-                            color: subject.2
-                        )
-                    }
-                }
-                .padding(.horizontal)
+                OnboardingToolCard(
+                    icon: "bubble.left.and.bubble.right",
+                    title: "AI Chat",
+                    color: .blue
+                )
+                
+                OnboardingToolCard(
+                    icon: "function",
+                    title: "Math Solver",
+                    color: .orange
+                )
+                
+                OnboardingToolCard(
+                    icon: "text.book.closed",
+                    title: "Study Notes",
+                    color: .green
+                )
             }
+            .padding(.horizontal)
+            .opacity(animateTools ? 1 : 0)
+            .offset(y: animateTools ? 0 : 30)
             
             Spacer()
             
-            Text("Conquer Any Task\nwith Powerful\nStudy Tools")
-                .font(.title)
-                .fontWeight(.bold)
+            Text("Powerful Study Tools\nAt Your Fingertips")
+                .font(.system(size: 32, weight: .bold))
                 .multilineTextAlignment(.center)
                 .padding(.bottom, 20)
+                .opacity(animateTitle ? 1 : 0)
         }
         .foregroundColor(.white)
+        .onAppear {
+            withAnimation(.easeOut(duration: 0.6)) {
+                animateTitle = true
+            }
+            withAnimation(.easeOut(duration: 0.6).delay(0.3)) {
+                animateTools = true
+            }
+        }
+    }
+}
+
+struct OnboardingToolCard: View {
+    let icon: String
+    let title: String
+    let color: Color
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Image(systemName: icon)
+                .font(.system(size: 30))
+                .foregroundColor(color)
+            
+            Text(title)
+                .font(.headline)
+                .foregroundColor(.white)
+        }
+        .frame(width: (UIScreen.main.bounds.width - 60) / 2)
+        .padding(20)
+        .background(Color.white.opacity(0.05))
+        .cornerRadius(20)
     }
 }
 
@@ -217,31 +285,34 @@ struct ThirdOnboardingPage: View {
             ScrollView {
                 VStack(spacing: 15) {
                     ReviewCard(
-                        text: "This helped me help my daughter with her homework !!! We went thru all the steps and got her home work done in no time",
+                        title: "Game Changer!",
+                        author: "MathWhiz123",
+                        date: "03/15/24",
+                        text: "This app completely transformed how I approach my calculus homework. The step-by-step explanations are incredibly detailed and helpful.",
                         rating: 5
                     )
                     
                     ReviewCard(
-                        title: "Thanks!",
-                        author: "Margot 🐷",
-                        date: "09/27/2023",
-                        text: "It helped me really well not only with giving answers but explaining how to find the answer.",
+                        title: "Perfect Study Companion",
+                        author: "PhysicsStudent",
+                        date: "03/12/24",
+                        text: "Not just for math! Helped me understand complex physics problems too. The AI explanations are clear and easy to follow.",
                         rating: 5
                     )
                     
                     ReviewCard(
-                        title: "Definitely a must",
-                        author: "MeloMamba",
-                        date: "10/23/2023",
-                        text: "Definitely does what it says. Awesome app fast results. Checking work a super breeze now!!!",
+                        title: "Better Than a Tutor",
+                        author: "StudyPro",
+                        date: "03/10/24",
+                        text: "24/7 help whenever I need it. The app breaks down complex problems into simple steps. Worth every penny!",
                         rating: 5
                     )
                     
                     ReviewCard(
-                        title: "Classwork",
-                        author: "El_pero_dotty",
-                        date: "10/26/2023",
-                        text: "I was not doing anything for 2 months and somehow bounced back, thank you Solvo.",
+                        title: "Life Saver",
+                        author: "ChemistryAce",
+                        date: "03/08/24",
+                        text: "From balancing equations to stoichiometry, this app has been invaluable for my chemistry studies. Highly recommend!",
                         rating: 5
                     )
                 }
@@ -250,7 +321,7 @@ struct ThirdOnboardingPage: View {
             
             Spacer()
             
-            Text("Join 1M\nHappy Users")
+            Text("Join 1M+\nSatisfied Students")
                 .font(.title)
                 .fontWeight(.bold)
                 .multilineTextAlignment(.center)

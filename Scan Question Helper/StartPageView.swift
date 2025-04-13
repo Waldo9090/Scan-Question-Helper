@@ -40,7 +40,7 @@ struct StartPageView: View {
                 Spacer(minLength: 0)
                 
                 // Continue Button (standardized)
-                ContinueNavigationButton(destination: OnboardingView2().navigationBarBackButtonHidden(true))
+                ContinueNavigationButton(destination: UnifiedOnboardingView().navigationBarBackButtonHidden(true))
                     .simultaneousGesture(TapGesture().onEnded {
                         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { granted, error in
                             if let error = error {

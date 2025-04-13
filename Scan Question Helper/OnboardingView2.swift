@@ -97,57 +97,7 @@ struct OnboardingView2: View {
     }
 }
 
-struct ToolButton: View {
-    let icon: String
-    let title: String
-    let subtitle: String
-    let color: Color
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Image(systemName: icon)
-                .font(.system(size: 30))
-                .foregroundColor(.white)
-            
-            VStack(alignment: .leading, spacing: 4) {
-                Text(title)
-                    .font(.headline)
-                    .foregroundColor(.white)
-                
-                Text(subtitle)
-                    .font(.caption)
-                    .foregroundColor(.white.opacity(0.8))
-                    .lineSpacing(2)
-            }
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding()
-        .background(color)
-        .cornerRadius(20)
-    }
-}
 
-struct SubjectButton: View {
-    let icon: String
-    var title: String
-    let color: Color
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Image(systemName: icon)
-                .font(.system(size: 24))
-                .foregroundColor(.white)
-            
-            Text(title)
-                .font(.headline)
-                .foregroundColor(.white)
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding()
-        .background(color)
-        .cornerRadius(20)
-    }
-}
 
 struct OnboardingView2_Previews: PreviewProvider {
     static var previews: some View {
